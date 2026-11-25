@@ -1,0 +1,37 @@
+datasource db {
+  provider = "sqlite"
+}
+
+model Category {
+  id       Int    @id @default(autoincrement())
+  name     String @unique
+  position Int
+  dishes   Dish[]
+}
+
+model Dish {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String     @default("")
+  priceCents  Int
+  available   Boolean    @default(true)
+  stock       Int?
+  categoryId  Int
+  category    Category   @relation(fields: [categoryId], references: [id])
+  allergens   Allergen[]
+}
+
+model Allergen {
+  id     Int    @id @default(autoincrement())
+  code   String @unique
+  label  String
+  dishes Dish[]
+}
+
+model Users {
+    id  Int @id @default(autoincrement())
+    email String @unique
+    name String 
+    password String
+    role String @unique
+}
