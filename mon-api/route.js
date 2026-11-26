@@ -34,4 +34,14 @@ router.get("/categories", async (req, res) => {
   }
 });
 
+router.get("/allergens", async (req, res) => {
+  try {
+    const allergens = await prisma.allergen.findMany();
+    res.json(allergens);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erreur lors de la récupération des allergènes" });
+  }
+});
+
 export default router;
