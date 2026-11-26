@@ -20,6 +20,7 @@ app.use((_req, res) => {
 });
 app.use(authErrorHandler);
 
-app.listen(3000, () => {
-  console.log("API disponible sur http://localhost:3000");
+const port = Number(process.env.PORT ?? 3000);
+app.listen(port, () => {
+  console.log(`API disponible sur http://localhost:${port}`);
 });

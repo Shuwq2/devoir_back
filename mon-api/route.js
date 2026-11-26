@@ -4,6 +4,7 @@ import { PrismaClient } from "./generated/prisma/client.ts";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { z } from "zod";
 import { AuthHttpError, createAuth, currentUser } from "./fourni/auth/index.ts";
+import { priceOrderItems } from "./services/order.service.ts";
 
 const adapter = new PrismaBetterSqlite3({
   url: process.env.DATABASE_URL,
@@ -332,22 +333,13 @@ router.post("/orders", auth.requireAuth, async (req, res) => {
       );
     }
 
-    const items = input.items.map(({ dishId, quantity }) => {
-      const dish = dishesById.get(dishId);
-      return {
-        dishId,
-        name: dish.name,
-        quantity,
-        unitPriceCents: dish.priceCents,
-        lineTotalCents: dish.priceCents * quantity,
-      };
-    });
+    const { items, totalCents } = priceOrderItems(input.items, dishesById);
 
     return transaction.order.create({
       data: {
         customerId: user.id,
         note: input.note,
-        totalCents: items.reduce((total, item) => total + item.lineTotalCents, 0),
+        totalCents,
         items: { create: items },
       },
       include: orderInclude,
