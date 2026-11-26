@@ -208,129 +208,23 @@ router.get("/dishes", async (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 router.get("/dishes/:id", async (req, res) => {
-  const { id } = req.params;
+  const rawId = req.params.id;
+  const id = Number(rawId);
+
+  if (!/^\d+$/.test(rawId) || !Number.isSafeInteger(id) || id < 1) {
+    return res.status(400).json({
+      error: {
+        code: "VALIDATION_ERROR",
+        message: "Données invalides",
+        details: [{ path: "id", message: "Doit être un entier strictement positif." }],
+      },
+    });
+  }
+
   try {
     const dish = await prisma.dish.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         category: true,
         allergens: true,
@@ -338,13 +232,23 @@ router.get("/dishes/:id", async (req, res) => {
     });
 
     if (!dish) {
-      return res.status(404).json({ error: "Plat non trouvé" });
+      return res.status(404).json({
+        error: {
+          code: "NOT_FOUND",
+          message: "Plat non trouvé",
+        },
+      });
     }
 
     res.json(dish);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erreur lors de la récupération du plat" });
+    res.status(500).json({
+      error: {
+        code: "INTERNAL_ERROR",
+        message: "Erreur lors de la récupération du plat.",
+      },
+    });
   }
 });
 
