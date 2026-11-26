@@ -10,6 +10,14 @@ installSecurity(app, {
 });
 
 app.use("/", router);
+app.use((_req, res) => {
+  res.status(404).json({
+    error: {
+      code: "NOT_FOUND",
+      message: "Route inconnue",
+    },
+  });
+});
 app.use(authErrorHandler);
 
 app.listen(3000, () => {
