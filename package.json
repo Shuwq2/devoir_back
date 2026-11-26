@@ -8,6 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
+    "test": "npm --prefix mon-api test",
     "front": "node front/serve.mjs",
     "paiement": "node pay-sim/server.mjs",
     "recette:1": "node --test --test-concurrency=1 --test-reporter=spec recette/palier-1.test.mjs",
