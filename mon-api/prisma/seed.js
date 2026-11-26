@@ -2,6 +2,7 @@ import "dotenv/config";
 import { readFileSync } from "node:fs";
 import { PrismaClient } from "../generated/prisma/client.ts";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { hashPassword } from "../fourni/auth/index.ts";
 
 const menu = JSON.parse(
   readFileSync(new URL("../../donnees/menu.json", import.meta.url), "utf8"),
@@ -24,6 +25,15 @@ try {
       where: { code: allergen.code },
       update: { label: allergen.label },
       create: allergen,
+    });
+  }
+
+  for (const user of menu.users) {
+    const password = await hashPassword(user.password);
+    await prisma.users.upsert({
+      where: { email: user.email },
+      update: { name: user.name, password, role: user.role },
+      create: { ...user, password },
     });
   }
 

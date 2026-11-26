@@ -246,6 +246,7 @@ export type DishWhereInput = {
   categoryId?: Prisma.IntFilter<"Dish"> | number
   category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
   allergens?: Prisma.AllergenListRelationFilter
+  orderItems?: Prisma.OrderItemListRelationFilter
 }
 
 export type DishOrderByWithRelationInput = {
@@ -258,6 +259,7 @@ export type DishOrderByWithRelationInput = {
   categoryId?: Prisma.SortOrder
   category?: Prisma.CategoryOrderByWithRelationInput
   allergens?: Prisma.AllergenOrderByRelationAggregateInput
+  orderItems?: Prisma.OrderItemOrderByRelationAggregateInput
 }
 
 export type DishWhereUniqueInput = Prisma.AtLeast<{
@@ -273,6 +275,7 @@ export type DishWhereUniqueInput = Prisma.AtLeast<{
   categoryId?: Prisma.IntFilter<"Dish"> | number
   category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
   allergens?: Prisma.AllergenListRelationFilter
+  orderItems?: Prisma.OrderItemListRelationFilter
 }, "id" | "name">
 
 export type DishOrderByWithAggregationInput = {
@@ -311,6 +314,7 @@ export type DishCreateInput = {
   stock?: number | null
   category: Prisma.CategoryCreateNestedOneWithoutDishesInput
   allergens?: Prisma.AllergenCreateNestedManyWithoutDishesInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutDishInput
 }
 
 export type DishUncheckedCreateInput = {
@@ -322,6 +326,7 @@ export type DishUncheckedCreateInput = {
   stock?: number | null
   categoryId: number
   allergens?: Prisma.AllergenUncheckedCreateNestedManyWithoutDishesInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutDishInput
 }
 
 export type DishUpdateInput = {
@@ -332,6 +337,7 @@ export type DishUpdateInput = {
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   category?: Prisma.CategoryUpdateOneRequiredWithoutDishesNestedInput
   allergens?: Prisma.AllergenUpdateManyWithoutDishesNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutDishNestedInput
 }
 
 export type DishUncheckedUpdateInput = {
@@ -343,6 +349,7 @@ export type DishUncheckedUpdateInput = {
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
   allergens?: Prisma.AllergenUncheckedUpdateManyWithoutDishesNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutDishNestedInput
 }
 
 export type DishCreateManyInput = {
@@ -425,6 +432,11 @@ export type DishSumOrderByAggregateInput = {
   priceCents?: Prisma.SortOrder
   stock?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+}
+
+export type DishScalarRelationFilter = {
+  is?: Prisma.DishWhereInput
+  isNot?: Prisma.DishWhereInput
 }
 
 export type DishCreateNestedManyWithoutCategoryInput = {
@@ -519,6 +531,20 @@ export type DishUncheckedUpdateManyWithoutAllergensNestedInput = {
   deleteMany?: Prisma.DishScalarWhereInput | Prisma.DishScalarWhereInput[]
 }
 
+export type DishCreateNestedOneWithoutOrderItemsInput = {
+  create?: Prisma.XOR<Prisma.DishCreateWithoutOrderItemsInput, Prisma.DishUncheckedCreateWithoutOrderItemsInput>
+  connectOrCreate?: Prisma.DishCreateOrConnectWithoutOrderItemsInput
+  connect?: Prisma.DishWhereUniqueInput
+}
+
+export type DishUpdateOneRequiredWithoutOrderItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.DishCreateWithoutOrderItemsInput, Prisma.DishUncheckedCreateWithoutOrderItemsInput>
+  connectOrCreate?: Prisma.DishCreateOrConnectWithoutOrderItemsInput
+  upsert?: Prisma.DishUpsertWithoutOrderItemsInput
+  connect?: Prisma.DishWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DishUpdateToOneWithWhereWithoutOrderItemsInput, Prisma.DishUpdateWithoutOrderItemsInput>, Prisma.DishUncheckedUpdateWithoutOrderItemsInput>
+}
+
 export type DishCreateWithoutCategoryInput = {
   name: string
   description?: string
@@ -526,6 +552,7 @@ export type DishCreateWithoutCategoryInput = {
   available?: boolean
   stock?: number | null
   allergens?: Prisma.AllergenCreateNestedManyWithoutDishesInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutDishInput
 }
 
 export type DishUncheckedCreateWithoutCategoryInput = {
@@ -536,6 +563,7 @@ export type DishUncheckedCreateWithoutCategoryInput = {
   available?: boolean
   stock?: number | null
   allergens?: Prisma.AllergenUncheckedCreateNestedManyWithoutDishesInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutDishInput
 }
 
 export type DishCreateOrConnectWithoutCategoryInput = {
@@ -583,6 +611,7 @@ export type DishCreateWithoutAllergensInput = {
   available?: boolean
   stock?: number | null
   category: Prisma.CategoryCreateNestedOneWithoutDishesInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutDishInput
 }
 
 export type DishUncheckedCreateWithoutAllergensInput = {
@@ -593,6 +622,7 @@ export type DishUncheckedCreateWithoutAllergensInput = {
   available?: boolean
   stock?: number | null
   categoryId: number
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutDishInput
 }
 
 export type DishCreateOrConnectWithoutAllergensInput = {
@@ -616,6 +646,64 @@ export type DishUpdateManyWithWhereWithoutAllergensInput = {
   data: Prisma.XOR<Prisma.DishUpdateManyMutationInput, Prisma.DishUncheckedUpdateManyWithoutAllergensInput>
 }
 
+export type DishCreateWithoutOrderItemsInput = {
+  name: string
+  description?: string
+  priceCents: number
+  available?: boolean
+  stock?: number | null
+  category: Prisma.CategoryCreateNestedOneWithoutDishesInput
+  allergens?: Prisma.AllergenCreateNestedManyWithoutDishesInput
+}
+
+export type DishUncheckedCreateWithoutOrderItemsInput = {
+  id?: number
+  name: string
+  description?: string
+  priceCents: number
+  available?: boolean
+  stock?: number | null
+  categoryId: number
+  allergens?: Prisma.AllergenUncheckedCreateNestedManyWithoutDishesInput
+}
+
+export type DishCreateOrConnectWithoutOrderItemsInput = {
+  where: Prisma.DishWhereUniqueInput
+  create: Prisma.XOR<Prisma.DishCreateWithoutOrderItemsInput, Prisma.DishUncheckedCreateWithoutOrderItemsInput>
+}
+
+export type DishUpsertWithoutOrderItemsInput = {
+  update: Prisma.XOR<Prisma.DishUpdateWithoutOrderItemsInput, Prisma.DishUncheckedUpdateWithoutOrderItemsInput>
+  create: Prisma.XOR<Prisma.DishCreateWithoutOrderItemsInput, Prisma.DishUncheckedCreateWithoutOrderItemsInput>
+  where?: Prisma.DishWhereInput
+}
+
+export type DishUpdateToOneWithWhereWithoutOrderItemsInput = {
+  where?: Prisma.DishWhereInput
+  data: Prisma.XOR<Prisma.DishUpdateWithoutOrderItemsInput, Prisma.DishUncheckedUpdateWithoutOrderItemsInput>
+}
+
+export type DishUpdateWithoutOrderItemsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  priceCents?: Prisma.IntFieldUpdateOperationsInput | number
+  available?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  category?: Prisma.CategoryUpdateOneRequiredWithoutDishesNestedInput
+  allergens?: Prisma.AllergenUpdateManyWithoutDishesNestedInput
+}
+
+export type DishUncheckedUpdateWithoutOrderItemsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  priceCents?: Prisma.IntFieldUpdateOperationsInput | number
+  available?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  allergens?: Prisma.AllergenUncheckedUpdateManyWithoutDishesNestedInput
+}
+
 export type DishCreateManyCategoryInput = {
   id?: number
   name: string
@@ -632,6 +720,7 @@ export type DishUpdateWithoutCategoryInput = {
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   allergens?: Prisma.AllergenUpdateManyWithoutDishesNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutDishNestedInput
 }
 
 export type DishUncheckedUpdateWithoutCategoryInput = {
@@ -642,6 +731,7 @@ export type DishUncheckedUpdateWithoutCategoryInput = {
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   allergens?: Prisma.AllergenUncheckedUpdateManyWithoutDishesNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutDishNestedInput
 }
 
 export type DishUncheckedUpdateManyWithoutCategoryInput = {
@@ -660,6 +750,7 @@ export type DishUpdateWithoutAllergensInput = {
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   category?: Prisma.CategoryUpdateOneRequiredWithoutDishesNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutDishNestedInput
 }
 
 export type DishUncheckedUpdateWithoutAllergensInput = {
@@ -670,6 +761,7 @@ export type DishUncheckedUpdateWithoutAllergensInput = {
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutDishNestedInput
 }
 
 export type DishUncheckedUpdateManyWithoutAllergensInput = {
@@ -689,10 +781,12 @@ export type DishUncheckedUpdateManyWithoutAllergensInput = {
 
 export type DishCountOutputType = {
   allergens: number
+  orderItems: number
 }
 
 export type DishCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   allergens?: boolean | DishCountOutputTypeCountAllergensArgs
+  orderItems?: boolean | DishCountOutputTypeCountOrderItemsArgs
 }
 
 /**
@@ -712,6 +806,13 @@ export type DishCountOutputTypeCountAllergensArgs<ExtArgs extends runtime.Types.
   where?: Prisma.AllergenWhereInput
 }
 
+/**
+ * DishCountOutputType without action
+ */
+export type DishCountOutputTypeCountOrderItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrderItemWhereInput
+}
+
 
 export type DishSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -723,6 +824,7 @@ export type DishSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   categoryId?: boolean
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   allergens?: boolean | Prisma.Dish$allergensArgs<ExtArgs>
+  orderItems?: boolean | Prisma.Dish$orderItemsArgs<ExtArgs>
   _count?: boolean | Prisma.DishCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dish"]>
 
@@ -762,6 +864,7 @@ export type DishOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type DishInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   allergens?: boolean | Prisma.Dish$allergensArgs<ExtArgs>
+  orderItems?: boolean | Prisma.Dish$orderItemsArgs<ExtArgs>
   _count?: boolean | Prisma.DishCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DishIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -776,6 +879,7 @@ export type $DishPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     category: Prisma.$CategoryPayload<ExtArgs>
     allergens: Prisma.$AllergenPayload<ExtArgs>[]
+    orderItems: Prisma.$OrderItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1181,6 +1285,7 @@ export interface Prisma__DishClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   category<T extends Prisma.CategoryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CategoryDefaultArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   allergens<T extends Prisma.Dish$allergensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Dish$allergensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AllergenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  orderItems<T extends Prisma.Dish$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Dish$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1637,6 +1742,30 @@ export type Dish$allergensArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.AllergenScalarFieldEnum | Prisma.AllergenScalarFieldEnum[]
+}
+
+/**
+ * Dish.orderItems
+ */
+export type Dish$orderItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrderItem
+   */
+  select?: Prisma.OrderItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrderItem
+   */
+  omit?: Prisma.OrderItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderItemInclude<ExtArgs> | null
+  where?: Prisma.OrderItemWhereInput
+  orderBy?: Prisma.OrderItemOrderByWithRelationInput | Prisma.OrderItemOrderByWithRelationInput[]
+  cursor?: Prisma.OrderItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrderItemScalarFieldEnum | Prisma.OrderItemScalarFieldEnum[]
 }
 
 /**

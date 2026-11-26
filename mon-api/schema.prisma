@@ -25,6 +25,7 @@ model Dish {
   categoryId  Int
   category    Category   @relation(fields: [categoryId], references: [id])
   allergens   Allergen[]
+  orderItems  OrderItem[]
 }
 
 model Allergen {
@@ -40,4 +41,34 @@ model Users {
     name String 
     password String
     role String 
+    orders Order[]
+}
+
+model Order {
+  id         Int         @id @default(autoincrement())
+  status     String      @default("RECEIVED")
+  note       String?
+  totalCents Int
+  customerId Int
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  customer   Users       @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  items      OrderItem[]
+
+  @@index([customerId, createdAt])
+}
+
+model OrderItem {
+  id             Int   @id @default(autoincrement())
+  orderId        Int
+  dishId         Int
+  name           String
+  quantity       Int
+  unitPriceCents Int
+  lineTotalCents Int
+  order          Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  dish           Dish  @relation(fields: [dishId], references: [id], onDelete: Restrict)
+
+  @@unique([orderId, dishId])
+  @@index([dishId])
 }

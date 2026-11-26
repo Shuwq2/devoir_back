@@ -59,3 +59,13 @@ export type Allergen = Prisma.AllergenModel
  * 
  */
 export type Users = Prisma.UsersModel
+/**
+ * Model Order
+ * 
+ */
+export type Order = Prisma.OrderModel
+/**
+ * Model OrderItem
+ * 
+ */
+export type OrderItem = Prisma.OrderItemModel
