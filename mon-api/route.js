@@ -85,7 +85,127 @@ router.get("/allergens", async (req, res) => {
   }
 });
 
+router.get("/dishes", async (req, res) => {
+  const details = [];
 
+  const readString = (key) => {
+    const value = req.query[key];
+
+    if (value === undefined) return "";
+    if (typeof value !== "string") {
+      details.push({ path: key, message: "Doit être une valeur unique." });
+      return "";
+    }
+
+    return value.trim();
+  };
+
+  const parseInteger = (key, raw, defaultValue, max = Infinity) => {
+    if (!raw) return defaultValue;
+
+    if (!/^\d+$/.test(raw)) {
+      details.push({ path: key, message: "Doit être un entier positif." });
+      return defaultValue;
+    }
+
+    const value = Number(raw);
+
+    if (!Number.isSafeInteger(value) || value < 1 || value > max) {
+      details.push({
+        path: key,
+        message: max === Infinity
+          ? "Doit être supérieur ou égal à 1."
+          : `Doit être compris entre 1 et ${max}.`,
+      });
+      return defaultValue;
+    }
+
+    return value;
+  };
+
+  const categoryRaw = readString("category");
+  const availableRaw = readString("available");
+  const allergenFreeRaw = readString("allergenFree");
+  const q = readString("q");
+  const pageRaw = readString("page");
+  const pageSizeRaw = readString("pageSize");
+
+  const categoryId = categoryRaw
+    ? parseInteger("category", categoryRaw, undefined)
+    : undefined;
+
+  let available;
+  if (availableRaw) {
+    if (availableRaw !== "true" && availableRaw !== "false") {
+      details.push({
+        path: "available",
+        message: 'Doit valoir "true" ou "false".',
+      });
+    } else {
+      available = availableRaw === "true";
+    }
+  }
+
+  if (q.length > 50) {
+    details.push({ path: "q", message: "Ne doit pas dépasser 50 caractères." });
+  }
+
+  const page = parseInteger("page", pageRaw, 1);
+  const pageSize = parseInteger("pageSize", pageSizeRaw, 20, 50);
+
+  if (details.length > 0) {
+    return res.status(400).json({
+      error: {
+        code: "VALIDATION_ERROR",
+        message: "Paramètres de requête invalides.",
+        details,
+      },
+    });
+  }
+
+  const allergenCodes = allergenFreeRaw
+    .split(",")
+    .map((code) => code.trim())
+    .filter(Boolean);
+
+  const where = {
+    ...(categoryId !== undefined && { categoryId }),
+    ...(available !== undefined && { available }),
+    ...(q && { name: { contains: q } }),
+    ...(allergenCodes.length > 0 && {
+      allergens: { none: { code: { in: allergenCodes } } },
+    }),
+  };
+
+  try {
+    const [total, items] = await Promise.all([
+      prisma.dish.count({ where }),
+      prisma.dish.findMany({
+        where,
+        include: {
+          category: { select: { id: true, name: true } },
+          allergens: { select: { code: true, label: true } },
+        },
+        orderBy: [
+          { category: { position: "asc" } },
+          { name: "asc" },
+        ],
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+
+    res.json({ items, total, page, pageSize });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: {
+        code: "INTERNAL_ERROR",
+        message: "Erreur lors de la récupération des plats.",
+      },
+    });
+  }
+});
 
 
 
