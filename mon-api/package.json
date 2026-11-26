@@ -2,9 +2,9 @@
   "name": "mon-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "dev": "tsx index.js",
+    "dev": "tsx app.js",
     "test": "node --import tsx --test --test-reporter=spec tests/categories.test.ts tests/dishes.test.ts tests/auth.test.ts tests/orders.test.ts"
   },
   "keywords": [],
