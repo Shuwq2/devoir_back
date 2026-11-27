@@ -10,6 +10,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/health", controllers.health);
+router.get("/events", auth.requireAuth, controllers.events);
 router.use("/", catalogRouter);
 router.use("/orders", ordersRouter);
 router.use("/auth", auth.router);
