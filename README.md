@@ -55,3 +55,7 @@ npm run paiement         # http://localhost:4010 — voir pay-sim/README.md
 | admin@roulotte.test | Admin123! | ADMIN |
 | cuisine@roulotte.test | Cuisine123! | STAFF |
 | client@roulotte.test | Client123! | CUSTOMER |
+
+
+
+FAIT APRÈES ORAL : PALIER-2 & PALIER-3
