@@ -23,8 +23,24 @@ const orderInputSchema = z.strictObject({
   note: z.string().max(200).optional(),
 });
 
+const orderStatusInputSchema = z.strictObject({
+  status: z.enum(orderStatuses),
+});
+
 export const parseOrderInput = (body) => {
   const result = orderInputSchema.safeParse(body);
+  if (!result.success) {
+    const details = result.error.issues.map((issue) => ({
+      path: issue.path.join(".") || "body",
+      message: issue.message,
+    }));
+    throw new AuthHttpError(400, "VALIDATION_ERROR", "Données invalides.", details);
+  }
+  return result.data;
+};
+
+export const parseOrderStatusInput = (body) => {
+  const result = orderStatusInputSchema.safeParse(body);
   if (!result.success) {
     const details = result.error.issues.map((issue) => ({
       path: issue.path.join(".") || "body",

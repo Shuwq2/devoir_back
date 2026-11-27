@@ -15,6 +15,20 @@ export function createOrderRepository(prisma) {
       });
     },
 
+    decrementDishStock(transaction, id, quantity) {
+      return transaction.dish.updateMany({
+        where: { id, stock: { gte: quantity } },
+        data: { stock: { decrement: quantity } },
+      }).then((result) => result.count > 0);
+    },
+
+    findDishStock(transaction, id) {
+      return transaction.dish.findUnique({
+        where: { id },
+        select: { stock: true },
+      });
+    },
+
     createInTransaction(transaction, data) {
       return transaction.order.create({
         data,
@@ -35,10 +49,24 @@ export function createOrderRepository(prisma) {
       ]);
     },
 
-    findOrderById(id) {
-      return prisma.order.findUnique({
+    findOrderById(id, client = prisma) {
+      return client.order.findUnique({
         where: { id },
         include: orderInclude,
+      });
+    },
+
+    updateOrderStatus(transaction, id, currentStatus, status) {
+      return transaction.order.updateMany({
+        where: { id, status: currentStatus },
+        data: { status },
+      }).then((result) => result.count > 0);
+    },
+
+    incrementDishStock(transaction, id, quantity) {
+      return transaction.dish.updateMany({
+        where: { id, stock: { not: null } },
+        data: { stock: { increment: quantity } },
       });
     },
   };
