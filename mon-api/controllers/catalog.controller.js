@@ -1,4 +1,5 @@
 import { parsePositiveId, parseDishInput } from "../validators/dish.validator.js";
+import { logger } from "../logger.js";
 
 export function createCatalogController(repository, dishesService) {
   return {
@@ -6,8 +7,8 @@ export function createCatalogController(repository, dishesService) {
       try {
         const categories = await repository.findCategories();
         res.json(categories);
-      } catch (error) {
-        console.error(error);
+      } catch {
+        logger.error({ requestId: res.locals.requestId }, "Failed to fetch categories");
         res.status(500).json({ error: "Erreur lors de la récupération des catégories" });
       }
     },
@@ -16,8 +17,8 @@ export function createCatalogController(repository, dishesService) {
       try {
         const allergens = await repository.findAllergens();
         res.json(allergens);
-      } catch (error) {
-        console.error(error);
+      } catch {
+        logger.error({ requestId: res.locals.requestId }, "Failed to fetch allergens");
         res.status(500).json({ error: "Erreur lors de la récupération des allergènes" });
       }
     },
@@ -122,8 +123,8 @@ export function createCatalogController(repository, dishesService) {
         });
 
         res.json({ items, total, page, pageSize });
-      } catch (error) {
-        console.error(error);
+      } catch {
+        logger.error({ requestId: res.locals.requestId }, "Failed to fetch dishes");
         res.status(500).json({
           error: {
             code: "INTERNAL_ERROR",
@@ -160,8 +161,8 @@ export function createCatalogController(repository, dishesService) {
         }
 
         res.json(dish);
-      } catch (error) {
-        console.error(error);
+      } catch {
+        logger.error({ requestId: res.locals.requestId }, "Failed to fetch dish");
         res.status(500).json({
           error: {
             code: "INTERNAL_ERROR",

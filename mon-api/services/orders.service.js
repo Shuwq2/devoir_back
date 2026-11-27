@@ -2,7 +2,7 @@ import { AuthHttpError } from "../fourni/auth/index.ts";
 import { priceOrderItems } from "./order.service.ts";
 import { orderStatuses } from "../validators/order.validator.js";
 
-export function createOrdersService(repository, eventHub) {
+export function createOrdersService(repository, eventHub, invalidateCatalog) {
   return {
     async createOrder(user, input) {
       const order = await repository.transaction(async (transaction) => {
@@ -52,6 +52,7 @@ export function createOrdersService(repository, eventHub) {
           items: { create: items },
         });
       });
+      invalidateCatalog();
       eventHub.publish("order.created", order);
       return order;
     },
@@ -168,6 +169,7 @@ export function createOrdersService(repository, eventHub) {
 
         return repository.findOrderById(id, transaction);
       });
+      invalidateCatalog();
       eventHub.publish("order.updated", order);
       return order;
     },
