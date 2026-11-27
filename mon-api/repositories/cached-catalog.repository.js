@@ -72,6 +72,12 @@ export function createCachedCatalogRepository(repository) {
       return dish;
     },
 
+    async updateDishImage(...args) {
+      const dish = await repository.updateDishImage(...args);
+      invalidate();
+      return dish;
+    },
+
     async deleteDish(...args) {
       const result = await repository.deleteDish(...args);
       invalidate();

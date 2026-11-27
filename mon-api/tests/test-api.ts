@@ -29,6 +29,7 @@ export async function startTestApi(): Promise<TestApi> {
   const env = {
     ...process.env,
     DATABASE_URL: `file:${join(directory, "test.db")}`,
+    UPLOAD_DIR: join(directory, "uploads"),
     JWT_SECRET: "integration-test-secret-long-enough",
     PORT: String(port),
   };

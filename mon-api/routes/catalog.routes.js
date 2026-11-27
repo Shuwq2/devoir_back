@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { auth, controllers } from "../container.js";
+import { dishImageUpload } from "../middleware/dish-image-upload.js";
 
 const router = Router();
 
@@ -10,5 +11,12 @@ router.post("/dishes", auth.requireAuth, auth.requireRole("ADMIN"), controllers.
 router.get("/dishes/:id", controllers.catalog.getDishById);
 router.patch("/dishes/:id", auth.requireAuth, auth.requireRole("ADMIN"), controllers.catalog.updateDish);
 router.delete("/dishes/:id", auth.requireAuth, auth.requireRole("ADMIN"), controllers.catalog.deleteDish);
+router.put(
+  "/dishes/:id/image",
+  auth.requireAuth,
+  auth.requireRole("ADMIN"),
+  dishImageUpload,
+  controllers.catalog.uploadDishImage,
+);
 
 export default router;

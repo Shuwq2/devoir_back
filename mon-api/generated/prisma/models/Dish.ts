@@ -47,6 +47,7 @@ export type DishMinAggregateOutputType = {
   priceCents: number | null
   available: boolean | null
   stock: number | null
+  imageUrl: string | null
   categoryId: number | null
 }
 
@@ -57,6 +58,7 @@ export type DishMaxAggregateOutputType = {
   priceCents: number | null
   available: boolean | null
   stock: number | null
+  imageUrl: string | null
   categoryId: number | null
 }
 
@@ -67,6 +69,7 @@ export type DishCountAggregateOutputType = {
   priceCents: number
   available: number
   stock: number
+  imageUrl: number
   categoryId: number
   _all: number
 }
@@ -93,6 +96,7 @@ export type DishMinAggregateInputType = {
   priceCents?: true
   available?: true
   stock?: true
+  imageUrl?: true
   categoryId?: true
 }
 
@@ -103,6 +107,7 @@ export type DishMaxAggregateInputType = {
   priceCents?: true
   available?: true
   stock?: true
+  imageUrl?: true
   categoryId?: true
 }
 
@@ -113,6 +118,7 @@ export type DishCountAggregateInputType = {
   priceCents?: true
   available?: true
   stock?: true
+  imageUrl?: true
   categoryId?: true
   _all?: true
 }
@@ -210,6 +216,7 @@ export type DishGroupByOutputType = {
   priceCents: number
   available: boolean
   stock: number | null
+  imageUrl: string | null
   categoryId: number
   _count: DishCountAggregateOutputType | null
   _avg: DishAvgAggregateOutputType | null
@@ -243,6 +250,7 @@ export type DishWhereInput = {
   priceCents?: Prisma.IntFilter<"Dish"> | number
   available?: Prisma.BoolFilter<"Dish"> | boolean
   stock?: Prisma.IntNullableFilter<"Dish"> | number | null
+  imageUrl?: Prisma.StringNullableFilter<"Dish"> | string | null
   categoryId?: Prisma.IntFilter<"Dish"> | number
   category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
   allergens?: Prisma.AllergenListRelationFilter
@@ -256,6 +264,7 @@ export type DishOrderByWithRelationInput = {
   priceCents?: Prisma.SortOrder
   available?: Prisma.SortOrder
   stock?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   category?: Prisma.CategoryOrderByWithRelationInput
   allergens?: Prisma.AllergenOrderByRelationAggregateInput
@@ -272,6 +281,7 @@ export type DishWhereUniqueInput = Prisma.AtLeast<{
   priceCents?: Prisma.IntFilter<"Dish"> | number
   available?: Prisma.BoolFilter<"Dish"> | boolean
   stock?: Prisma.IntNullableFilter<"Dish"> | number | null
+  imageUrl?: Prisma.StringNullableFilter<"Dish"> | string | null
   categoryId?: Prisma.IntFilter<"Dish"> | number
   category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
   allergens?: Prisma.AllergenListRelationFilter
@@ -285,6 +295,7 @@ export type DishOrderByWithAggregationInput = {
   priceCents?: Prisma.SortOrder
   available?: Prisma.SortOrder
   stock?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   _count?: Prisma.DishCountOrderByAggregateInput
   _avg?: Prisma.DishAvgOrderByAggregateInput
@@ -303,6 +314,7 @@ export type DishScalarWhereWithAggregatesInput = {
   priceCents?: Prisma.IntWithAggregatesFilter<"Dish"> | number
   available?: Prisma.BoolWithAggregatesFilter<"Dish"> | boolean
   stock?: Prisma.IntNullableWithAggregatesFilter<"Dish"> | number | null
+  imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Dish"> | string | null
   categoryId?: Prisma.IntWithAggregatesFilter<"Dish"> | number
 }
 
@@ -312,6 +324,7 @@ export type DishCreateInput = {
   priceCents: number
   available?: boolean
   stock?: number | null
+  imageUrl?: string | null
   category: Prisma.CategoryCreateNestedOneWithoutDishesInput
   allergens?: Prisma.AllergenCreateNestedManyWithoutDishesInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutDishInput
@@ -324,6 +337,7 @@ export type DishUncheckedCreateInput = {
   priceCents: number
   available?: boolean
   stock?: number | null
+  imageUrl?: string | null
   categoryId: number
   allergens?: Prisma.AllergenUncheckedCreateNestedManyWithoutDishesInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutDishInput
@@ -335,6 +349,7 @@ export type DishUpdateInput = {
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.CategoryUpdateOneRequiredWithoutDishesNestedInput
   allergens?: Prisma.AllergenUpdateManyWithoutDishesNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutDishNestedInput
@@ -347,6 +362,7 @@ export type DishUncheckedUpdateInput = {
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
   allergens?: Prisma.AllergenUncheckedUpdateManyWithoutDishesNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutDishNestedInput
@@ -359,6 +375,7 @@ export type DishCreateManyInput = {
   priceCents: number
   available?: boolean
   stock?: number | null
+  imageUrl?: string | null
   categoryId: number
 }
 
@@ -368,6 +385,7 @@ export type DishUpdateManyMutationInput = {
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DishUncheckedUpdateManyInput = {
@@ -377,6 +395,7 @@ export type DishUncheckedUpdateManyInput = {
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -397,6 +416,7 @@ export type DishCountOrderByAggregateInput = {
   priceCents?: Prisma.SortOrder
   available?: Prisma.SortOrder
   stock?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
 }
 
@@ -414,6 +434,7 @@ export type DishMaxOrderByAggregateInput = {
   priceCents?: Prisma.SortOrder
   available?: Prisma.SortOrder
   stock?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
 }
 
@@ -424,6 +445,7 @@ export type DishMinOrderByAggregateInput = {
   priceCents?: Prisma.SortOrder
   available?: Prisma.SortOrder
   stock?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
 }
 
@@ -493,6 +515,10 @@ export type NullableIntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
 export type DishCreateNestedManyWithoutAllergensInput = {
   create?: Prisma.XOR<Prisma.DishCreateWithoutAllergensInput, Prisma.DishUncheckedCreateWithoutAllergensInput> | Prisma.DishCreateWithoutAllergensInput[] | Prisma.DishUncheckedCreateWithoutAllergensInput[]
   connectOrCreate?: Prisma.DishCreateOrConnectWithoutAllergensInput | Prisma.DishCreateOrConnectWithoutAllergensInput[]
@@ -551,6 +577,7 @@ export type DishCreateWithoutCategoryInput = {
   priceCents: number
   available?: boolean
   stock?: number | null
+  imageUrl?: string | null
   allergens?: Prisma.AllergenCreateNestedManyWithoutDishesInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutDishInput
 }
@@ -562,6 +589,7 @@ export type DishUncheckedCreateWithoutCategoryInput = {
   priceCents: number
   available?: boolean
   stock?: number | null
+  imageUrl?: string | null
   allergens?: Prisma.AllergenUncheckedCreateNestedManyWithoutDishesInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutDishInput
 }
@@ -601,6 +629,7 @@ export type DishScalarWhereInput = {
   priceCents?: Prisma.IntFilter<"Dish"> | number
   available?: Prisma.BoolFilter<"Dish"> | boolean
   stock?: Prisma.IntNullableFilter<"Dish"> | number | null
+  imageUrl?: Prisma.StringNullableFilter<"Dish"> | string | null
   categoryId?: Prisma.IntFilter<"Dish"> | number
 }
 
@@ -610,6 +639,7 @@ export type DishCreateWithoutAllergensInput = {
   priceCents: number
   available?: boolean
   stock?: number | null
+  imageUrl?: string | null
   category: Prisma.CategoryCreateNestedOneWithoutDishesInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutDishInput
 }
@@ -621,6 +651,7 @@ export type DishUncheckedCreateWithoutAllergensInput = {
   priceCents: number
   available?: boolean
   stock?: number | null
+  imageUrl?: string | null
   categoryId: number
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutDishInput
 }
@@ -652,6 +683,7 @@ export type DishCreateWithoutOrderItemsInput = {
   priceCents: number
   available?: boolean
   stock?: number | null
+  imageUrl?: string | null
   category: Prisma.CategoryCreateNestedOneWithoutDishesInput
   allergens?: Prisma.AllergenCreateNestedManyWithoutDishesInput
 }
@@ -663,6 +695,7 @@ export type DishUncheckedCreateWithoutOrderItemsInput = {
   priceCents: number
   available?: boolean
   stock?: number | null
+  imageUrl?: string | null
   categoryId: number
   allergens?: Prisma.AllergenUncheckedCreateNestedManyWithoutDishesInput
 }
@@ -689,6 +722,7 @@ export type DishUpdateWithoutOrderItemsInput = {
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.CategoryUpdateOneRequiredWithoutDishesNestedInput
   allergens?: Prisma.AllergenUpdateManyWithoutDishesNestedInput
 }
@@ -700,6 +734,7 @@ export type DishUncheckedUpdateWithoutOrderItemsInput = {
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
   allergens?: Prisma.AllergenUncheckedUpdateManyWithoutDishesNestedInput
 }
@@ -711,6 +746,7 @@ export type DishCreateManyCategoryInput = {
   priceCents: number
   available?: boolean
   stock?: number | null
+  imageUrl?: string | null
 }
 
 export type DishUpdateWithoutCategoryInput = {
@@ -719,6 +755,7 @@ export type DishUpdateWithoutCategoryInput = {
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   allergens?: Prisma.AllergenUpdateManyWithoutDishesNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutDishNestedInput
 }
@@ -730,6 +767,7 @@ export type DishUncheckedUpdateWithoutCategoryInput = {
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   allergens?: Prisma.AllergenUncheckedUpdateManyWithoutDishesNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutDishNestedInput
 }
@@ -741,6 +779,7 @@ export type DishUncheckedUpdateManyWithoutCategoryInput = {
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DishUpdateWithoutAllergensInput = {
@@ -749,6 +788,7 @@ export type DishUpdateWithoutAllergensInput = {
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.CategoryUpdateOneRequiredWithoutDishesNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutDishNestedInput
 }
@@ -760,6 +800,7 @@ export type DishUncheckedUpdateWithoutAllergensInput = {
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutDishNestedInput
 }
@@ -771,6 +812,7 @@ export type DishUncheckedUpdateManyWithoutAllergensInput = {
   priceCents?: Prisma.IntFieldUpdateOperationsInput | number
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -821,6 +863,7 @@ export type DishSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   priceCents?: boolean
   available?: boolean
   stock?: boolean
+  imageUrl?: boolean
   categoryId?: boolean
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   allergens?: boolean | Prisma.Dish$allergensArgs<ExtArgs>
@@ -835,6 +878,7 @@ export type DishSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   priceCents?: boolean
   available?: boolean
   stock?: boolean
+  imageUrl?: boolean
   categoryId?: boolean
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dish"]>
@@ -846,6 +890,7 @@ export type DishSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   priceCents?: boolean
   available?: boolean
   stock?: boolean
+  imageUrl?: boolean
   categoryId?: boolean
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dish"]>
@@ -857,10 +902,11 @@ export type DishSelectScalar = {
   priceCents?: boolean
   available?: boolean
   stock?: boolean
+  imageUrl?: boolean
   categoryId?: boolean
 }
 
-export type DishOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "priceCents" | "available" | "stock" | "categoryId", ExtArgs["result"]["dish"]>
+export type DishOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "priceCents" | "available" | "stock" | "imageUrl" | "categoryId", ExtArgs["result"]["dish"]>
 export type DishInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   allergens?: boolean | Prisma.Dish$allergensArgs<ExtArgs>
@@ -888,6 +934,7 @@ export type $DishPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     priceCents: number
     available: boolean
     stock: number | null
+    imageUrl: string | null
     categoryId: number
   }, ExtArgs["result"]["dish"]>
   composites: {}
@@ -1321,6 +1368,7 @@ export interface DishFieldRefs {
   readonly priceCents: Prisma.FieldRef<"Dish", 'Int'>
   readonly available: Prisma.FieldRef<"Dish", 'Boolean'>
   readonly stock: Prisma.FieldRef<"Dish", 'Int'>
+  readonly imageUrl: Prisma.FieldRef<"Dish", 'String'>
   readonly categoryId: Prisma.FieldRef<"Dish", 'Int'>
 }
     

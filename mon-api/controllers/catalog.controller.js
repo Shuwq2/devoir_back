@@ -1,7 +1,8 @@
 import { parsePositiveId, parseDishInput } from "../validators/dish.validator.js";
 import { logger } from "../logger.js";
+import { AuthHttpError } from "../fourni/auth/index.ts";
 
-export function createCatalogController(repository, dishesService) {
+export function createCatalogController(repository, dishesService, dishImageService) {
   return {
     async categories(req, res) {
       try {
@@ -188,6 +189,16 @@ export function createCatalogController(repository, dishesService) {
       const id = parsePositiveId(req.params.id);
       await dishesService.deleteDish(id);
       res.status(204).end();
+    },
+
+    async uploadDishImage(req, res) {
+      const id = parsePositiveId(req.params.id);
+      if (!req.file) {
+        throw new AuthHttpError(400, "VALIDATION_ERROR", "Le fichier image est requis.");
+      }
+
+      const dish = await dishImageService.replaceImage(id, req.file.buffer);
+      res.json(dish);
     },
   };
 }

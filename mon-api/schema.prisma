@@ -22,6 +22,7 @@ model Dish {
   priceCents  Int
   available   Boolean    @default(true)
   stock       Int?
+  imageUrl    String?
   categoryId  Int
   category    Category   @relation(fields: [categoryId], references: [id])
   allergens   Allergen[]
