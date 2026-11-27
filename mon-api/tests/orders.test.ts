@@ -113,4 +113,167 @@ describe("Commandes", () => {
     assert.equal(resultat.items[1].lineTotalCents, 400);
     assert.equal(resultat.totalCents, 2700);
   });
+
+  it("autorise les transitions cuisine et l'annulation client avec restauration du stock", async () => {
+    const login = async (email: string, password: string) => {
+      const response = await api.request("POST", "/auth/login", { email, password });
+      assert.equal(response.status, 200);
+      return (response.body as { token: string }).token;
+    };
+    const customerToken = await login("client@roulotte.test", "Client123!");
+    const staffToken = await login("cuisine@roulotte.test", "Cuisine123!");
+    const adminToken = await login("admin@roulotte.test", "Admin123!");
+    const registration = await api.request("POST", "/auth/register", {
+      email: `autre-${Date.now()}@example.test`,
+      name: "Autre client",
+      password: "motdepasse123",
+    });
+    const otherCustomerToken = await login(
+      (registration.body as { email: string }).email,
+      "motdepasse123",
+    );
+    const categories = await api.request("GET", "/categories");
+    const categoryId = (categories.body as Array<{ id: number }>)[0].id;
+    const createdDish = await api.request("POST", "/dishes", {
+      name: `Plat stock ${Date.now()}`,
+      priceCents: 500,
+      categoryId,
+      stock: 4,
+    }, adminToken);
+    const dishId = (createdDish.body as { id: number }).id;
+    const createdOrder = await api.request("POST", "/orders", {
+      items: [{ dishId, quantity: 3 }],
+    }, customerToken);
+    const orderId = (createdOrder.body as { id: number }).id;
+
+    const dishAfterOrder = await api.request("GET", `/dishes/${dishId}`);
+    assert.equal((dishAfterOrder.body as { stock: number }).stock, 1);
+    assert.equal((await api.request("PATCH", `/orders/${orderId}/status`, { status: "PREPARING" }, customerToken)).status, 403);
+    assert.equal((await api.request("PATCH", `/orders/${orderId}/status`, { status: "CANCELLED" }, otherCustomerToken)).status, 404);
+
+    const cancelled = await api.request(
+      "PATCH",
+      `/orders/${orderId}/status`,
+      { status: "CANCELLED" },
+      customerToken,
+    );
+    assert.equal(cancelled.status, 200);
+    assert.equal((cancelled.body as { status: string }).status, "CANCELLED");
+    const dishAfterCancel = await api.request("GET", `/dishes/${dishId}`);
+    assert.equal((dishAfterCancel.body as { stock: number }).stock, 4);
+
+    const kitchenOrder = await api.request("POST", "/orders", {
+      items: [{ dishId, quantity: 1 }],
+    }, customerToken);
+    const kitchenOrderId = (kitchenOrder.body as { id: number }).id;
+    const kitchenCancellation = await api.request(
+      "PATCH",
+      `/orders/${kitchenOrderId}/status`,
+      { status: "CANCELLED" },
+      staffToken,
+    );
+    assert.equal(kitchenCancellation.status, 200);
+    const dishAfterKitchenCancel = await api.request("GET", `/dishes/${dishId}`);
+    assert.equal((dishAfterKitchenCancel.body as { stock: number }).stock, 4);
+
+    const nextOrder = await api.request("POST", "/orders", {
+      items: [{ dishId, quantity: 1 }],
+    }, customerToken);
+    const nextOrderId = (nextOrder.body as { id: number }).id;
+    for (const status of ["PREPARING", "READY", "PICKED_UP"]) {
+      const update = await api.request("PATCH", `/orders/${nextOrderId}/status`, { status }, staffToken);
+      assert.equal(update.status, 200);
+      assert.equal((update.body as { status: string }).status, status);
+    }
+
+    const invalidTransition = await api.request(
+      "PATCH",
+      `/orders/${nextOrderId}/status`,
+      { status: "CANCELLED" },
+      staffToken,
+    );
+    assert.equal(invalidTransition.status, 409);
+    assert.equal(
+      (invalidTransition.body as { error: { code: string } }).error.code,
+      "INVALID_TRANSITION",
+    );
+    assert.equal(
+      (await api.request("PATCH", `/orders/${nextOrderId}/status`, { status: "UNKNOWN" }, staffToken)).status,
+      400,
+    );
+  });
+
+  it("réserve le stock atomiquement et refuse les commandes excédentaires", async () => {
+    const adminResponse = await api.request("POST", "/auth/login", {
+      email: "admin@roulotte.test",
+      password: "Admin123!",
+    });
+    const adminToken = (adminResponse.body as { token: string }).token;
+    const categoryResponse = await api.request("GET", "/categories");
+    const categoryId = (categoryResponse.body as Array<{ id: number }>)[0].id;
+    const dishResponse = await api.request("POST", "/dishes", {
+      name: `Stock simultané ${Date.now()}`,
+      priceCents: 500,
+      categoryId,
+      stock: 3,
+    }, adminToken);
+    const dishId = (dishResponse.body as { id: number }).id;
+
+    const tokens = await Promise.all(
+      Array.from({ length: 6 }, async (_, index) => {
+        const email = `stock-${Date.now()}-${index}@example.test`;
+        await api.request("POST", "/auth/register", {
+          email,
+          name: `Client ${index}`,
+          password: "motdepasse123",
+        });
+        const login = await api.request("POST", "/auth/login", { email, password: "motdepasse123" });
+        return (login.body as { token: string }).token;
+      }),
+    );
+    const plentyResponse = await api.request("POST", "/dishes", {
+      name: `Stock abondant ${Date.now()}`,
+      priceCents: 500,
+      categoryId,
+      stock: 5,
+    }, adminToken);
+    const scarceResponse = await api.request("POST", "/dishes", {
+      name: `Stock limité ${Date.now()}`,
+      priceCents: 500,
+      categoryId,
+      stock: 1,
+    }, adminToken);
+    const plentyId = (plentyResponse.body as { id: number }).id;
+    const scarceId = (scarceResponse.body as { id: number }).id;
+    const stockTestToken = tokens[0];
+    assert.ok(stockTestToken, "Le test doit avoir un client enregistré.");
+    const rejectedOrder = await api.request("POST", "/orders", {
+      items: [
+        { dishId: plentyId, quantity: 2 },
+        { dishId: scarceId, quantity: 2 },
+      ],
+    }, stockTestToken);
+    assert.equal(rejectedOrder.status, 409);
+    assert.equal(
+      (rejectedOrder.body as { error: { code: string } }).error.code,
+      "OUT_OF_STOCK",
+    );
+    const plentyAfterReject = await api.request("GET", `/dishes/${plentyId}`);
+    const scarceAfterReject = await api.request("GET", `/dishes/${scarceId}`);
+    assert.equal((plentyAfterReject.body as { stock: number }).stock, 5);
+    assert.equal((scarceAfterReject.body as { stock: number }).stock, 1);
+
+    const orders = await Promise.all(tokens.map((token) => api.request(
+      "POST",
+      "/orders",
+      { items: [{ dishId, quantity: 1 }] },
+      token,
+    )));
+    assert.deepEqual(
+      orders.map(({ status }) => status).sort(),
+      [201, 201, 201, 409, 409, 409],
+    );
+    const finalDish = await api.request("GET", `/dishes/${dishId}`);
+    assert.equal((finalDish.body as { stock: number }).stock, 0);
+  });
 });

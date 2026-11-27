@@ -8,11 +8,13 @@ import { createHealthRepository } from "./repositories/health.repository.js";
 import { createOrderRepository } from "./repositories/order.repository.js";
 import { createUserRepository } from "./repositories/user.repository.js";
 import { createOrdersService } from "./services/orders.service.js";
+import { createCatalogService } from "./services/catalog.service.js";
 
 const userRepository = createUserRepository(prisma);
 const catalogRepository = createCatalogRepository(prisma);
 const healthRepository = createHealthRepository(prisma);
 const orderRepository = createOrderRepository(prisma);
+const catalogService = createCatalogService(catalogRepository);
 
 export const auth = createAuth({
   users: userRepository,
@@ -20,7 +22,7 @@ export const auth = createAuth({
 });
 
 export const controllers = {
-  catalog: createCatalogController(catalogRepository),
+  catalog: createCatalogController(catalogRepository, catalogService),
   health: createHealthController(healthRepository),
   orders: createOrdersController(createOrdersService(orderRepository)),
 };

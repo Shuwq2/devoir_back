@@ -27,6 +27,22 @@ export function createOrdersService(repository) {
           );
         }
 
+        for (const { dishId, quantity } of input.items) {
+          const dish = dishesById.get(dishId);
+          if (dish.stock === null) continue;
+
+          const decremented = await repository.decrementDishStock(transaction, dishId, quantity);
+          if (!decremented) {
+            const currentDish = await repository.findDishStock(transaction, dishId);
+            throw new AuthHttpError(
+              409,
+              "OUT_OF_STOCK",
+              "Stock insuffisant.",
+              [{ dishId, available: currentDish?.stock ?? 0 }],
+            );
+          }
+        }
+
         const { items, totalCents } = priceOrderItems(input.items, dishesById);
 
         return repository.createInTransaction(transaction, {
@@ -110,6 +126,46 @@ export function createOrdersService(repository) {
         throw new AuthHttpError(404, "NOT_FOUND", "Commande introuvable.");
       }
       return order;
+    },
+
+    async updateOrderStatus(user, id, status) {
+      return repository.transaction(async (transaction) => {
+        const order = await repository.findOrderById(id, transaction);
+        if (!order || (user.role === "CUSTOMER" && order.customerId !== user.id)) {
+          throw new AuthHttpError(404, "NOT_FOUND", "Commande introuvable.");
+        }
+
+        if (user.role === "CUSTOMER" && status !== "CANCELLED") {
+          throw new AuthHttpError(403, "FORBIDDEN", "Un client peut uniquement annuler sa commande.");
+        }
+
+        const allowedTransitions = {
+          RECEIVED: ["PREPARING", "CANCELLED"],
+          PREPARING: ["READY", "CANCELLED"],
+          READY: ["PICKED_UP", "CANCELLED"],
+          PICKED_UP: [],
+          CANCELLED: [],
+        };
+        if (
+          !allowedTransitions[order.status]?.includes(status)
+          || (user.role === "CUSTOMER" && order.status !== "RECEIVED")
+        ) {
+          throw new AuthHttpError(409, "INVALID_TRANSITION", "Transition de statut invalide.");
+        }
+
+        const updated = await repository.updateOrderStatus(transaction, id, order.status, status);
+        if (!updated) {
+          throw new AuthHttpError(409, "INVALID_TRANSITION", "Transition de statut invalide.");
+        }
+
+        if (status === "CANCELLED") {
+          for (const item of order.items) {
+            await repository.incrementDishStock(transaction, item.dishId, item.quantity);
+          }
+        }
+
+        return repository.findOrderById(id, transaction);
+      });
     },
   };
 }

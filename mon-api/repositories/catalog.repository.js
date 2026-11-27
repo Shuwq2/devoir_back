@@ -40,5 +40,52 @@ export function createCatalogRepository(prisma) {
         },
       });
     },
+
+    findCategoryById(id) {
+      return prisma.category.findUnique({ where: { id }, select: { id: true } });
+    },
+
+    findAllergensByCodes(codes) {
+      return prisma.allergen.findMany({
+        where: { code: { in: codes } },
+        select: { code: true },
+      });
+    },
+
+    createDish(input, include) {
+      const { allergens, ...fields } = input;
+      return prisma.dish.create({
+        data: {
+          ...fields,
+          allergens: { connect: [...new Set(allergens)].map((code) => ({ code })) },
+        },
+        include,
+      });
+    },
+
+    updateDish(id, input, include) {
+      const { allergens, ...fields } = input;
+      return prisma.dish.update({
+        where: { id },
+        data: {
+          ...fields,
+          ...(allergens !== undefined && {
+            allergens: { set: [...new Set(allergens)].map((code) => ({ code })) },
+          }),
+        },
+        include,
+      });
+    },
+
+    hasOrderItems(dishId) {
+      return prisma.orderItem.findFirst({
+        where: { dishId },
+        select: { id: true },
+      }).then(Boolean);
+    },
+
+    deleteDish(id) {
+      return prisma.dish.delete({ where: { id } });
+    },
   };
 }

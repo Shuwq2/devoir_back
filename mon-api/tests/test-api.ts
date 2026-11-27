@@ -36,7 +36,7 @@ export async function startTestApi(): Promise<TestApi> {
   execFileSync(prisma, ["migrate", "deploy"], { cwd: apiDirectory, env, stdio: "ignore" });
   execFileSync(tsx, ["prisma/seed.js"], { cwd: apiDirectory, env, stdio: "ignore" });
 
-  const child: ChildProcess = spawn(process.execPath, ["--import", "tsx", "index.js"], {
+  const child: ChildProcess = spawn(process.execPath, ["--import", "tsx", "app.js"], {
     cwd: apiDirectory,
     env,
     stdio: "ignore",

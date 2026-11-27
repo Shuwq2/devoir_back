@@ -1,4 +1,6 @@
-export function createCatalogController(repository) {
+import { parsePositiveId, parseDishInput } from "../validators/dish.validator.js";
+
+export function createCatalogController(repository, dishesService) {
   return {
     async categories(req, res) {
       try {
@@ -167,6 +169,24 @@ export function createCatalogController(repository) {
           },
         });
       }
+    },
+
+    async createDish(req, res) {
+      const input = parseDishInput(req.body);
+      const dish = await dishesService.createDish(input);
+      res.status(201).location(`/dishes/${dish.id}`).json(dish);
+    },
+
+    async updateDish(req, res) {
+      const id = parsePositiveId(req.params.id);
+      const input = parseDishInput(req.body, { partial: true });
+      res.json(await dishesService.updateDish(id, input));
+    },
+
+    async deleteDish(req, res) {
+      const id = parsePositiveId(req.params.id);
+      await dishesService.deleteDish(id);
+      res.status(204).end();
     },
   };
 }
