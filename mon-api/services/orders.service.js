@@ -2,10 +2,10 @@ import { AuthHttpError } from "../fourni/auth/index.ts";
 import { priceOrderItems } from "./order.service.ts";
 import { orderStatuses } from "../validators/order.validator.js";
 
-export function createOrdersService(repository) {
+export function createOrdersService(repository, eventHub, invalidateCatalog) {
   return {
     async createOrder(user, input) {
-      return repository.transaction(async (transaction) => {
+      const order = await repository.transaction(async (transaction) => {
         const dishes = await repository.findDishes(
           transaction,
           input.items.map((item) => item.dishId),
@@ -52,6 +52,9 @@ export function createOrdersService(repository) {
           items: { create: items },
         });
       });
+      invalidateCatalog();
+      eventHub.publish("order.created", order);
+      return order;
     },
 
     async listOrders(user, query) {
@@ -129,7 +132,7 @@ export function createOrdersService(repository) {
     },
 
     async updateOrderStatus(user, id, status) {
-      return repository.transaction(async (transaction) => {
+      const order = await repository.transaction(async (transaction) => {
         const order = await repository.findOrderById(id, transaction);
         if (!order || (user.role === "CUSTOMER" && order.customerId !== user.id)) {
           throw new AuthHttpError(404, "NOT_FOUND", "Commande introuvable.");
@@ -166,6 +169,9 @@ export function createOrdersService(repository) {
 
         return repository.findOrderById(id, transaction);
       });
+      invalidateCatalog();
+      eventHub.publish("order.updated", order);
+      return order;
     },
   };
 }

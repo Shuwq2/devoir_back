@@ -468,10 +468,6 @@ export type OrderUncheckedUpdateManyWithoutCustomerNestedInput = {
   deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[]
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }

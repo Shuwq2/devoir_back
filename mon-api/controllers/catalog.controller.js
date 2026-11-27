@@ -1,13 +1,15 @@
 import { parsePositiveId, parseDishInput } from "../validators/dish.validator.js";
+import { logger } from "../logger.js";
+import { AuthHttpError } from "../fourni/auth/index.ts";
 
-export function createCatalogController(repository, dishesService) {
+export function createCatalogController(repository, dishesService, dishImageService) {
   return {
     async categories(req, res) {
       try {
         const categories = await repository.findCategories();
         res.json(categories);
-      } catch (error) {
-        console.error(error);
+      } catch {
+        logger.error({ requestId: res.locals.requestId }, "Failed to fetch categories");
         res.status(500).json({ error: "Erreur lors de la récupération des catégories" });
       }
     },
@@ -16,8 +18,8 @@ export function createCatalogController(repository, dishesService) {
       try {
         const allergens = await repository.findAllergens();
         res.json(allergens);
-      } catch (error) {
-        console.error(error);
+      } catch {
+        logger.error({ requestId: res.locals.requestId }, "Failed to fetch allergens");
         res.status(500).json({ error: "Erreur lors de la récupération des allergènes" });
       }
     },
@@ -122,8 +124,8 @@ export function createCatalogController(repository, dishesService) {
         });
 
         res.json({ items, total, page, pageSize });
-      } catch (error) {
-        console.error(error);
+      } catch {
+        logger.error({ requestId: res.locals.requestId }, "Failed to fetch dishes");
         res.status(500).json({
           error: {
             code: "INTERNAL_ERROR",
@@ -160,8 +162,8 @@ export function createCatalogController(repository, dishesService) {
         }
 
         res.json(dish);
-      } catch (error) {
-        console.error(error);
+      } catch {
+        logger.error({ requestId: res.locals.requestId }, "Failed to fetch dish");
         res.status(500).json({
           error: {
             code: "INTERNAL_ERROR",
@@ -187,6 +189,16 @@ export function createCatalogController(repository, dishesService) {
       const id = parsePositiveId(req.params.id);
       await dishesService.deleteDish(id);
       res.status(204).end();
+    },
+
+    async uploadDishImage(req, res) {
+      const id = parsePositiveId(req.params.id);
+      if (!req.file) {
+        throw new AuthHttpError(400, "VALIDATION_ERROR", "Le fichier image est requis.");
+      }
+
+      const dish = await dishImageService.replaceImage(id, req.file.buffer);
+      res.json(dish);
     },
   };
 }

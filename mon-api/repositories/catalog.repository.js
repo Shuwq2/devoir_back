@@ -77,6 +77,17 @@ export function createCatalogRepository(prisma) {
       });
     },
 
+    updateDishImage(id, imageUrl) {
+      return prisma.dish.update({
+        where: { id },
+        data: { imageUrl },
+        include: {
+          category: true,
+          allergens: true,
+        },
+      });
+    },
+
     hasOrderItems(dishId) {
       return prisma.orderItem.findFirst({
         where: { dishId },

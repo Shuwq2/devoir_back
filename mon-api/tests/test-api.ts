@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 const apiDirectory = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 export type TestApi = {
+  baseUrl: string;
   request(method: string, path: string, body?: unknown, token?: string): Promise<{
     status: number;
     headers: Headers;
@@ -28,6 +29,7 @@ export async function startTestApi(): Promise<TestApi> {
   const env = {
     ...process.env,
     DATABASE_URL: `file:${join(directory, "test.db")}`,
+    UPLOAD_DIR: join(directory, "uploads"),
     JWT_SECRET: "integration-test-secret-long-enough",
     PORT: String(port),
   };
@@ -60,6 +62,7 @@ export async function startTestApi(): Promise<TestApi> {
   }
 
   return {
+    baseUrl,
     async request(method: string, path: string, body?: unknown, token?: string) {
       const headers = new Headers();
       if (body !== undefined) headers.set("content-type", "application/json");
